@@ -12,11 +12,16 @@ const SignupPage = () => {
   const [state, setState] = useState({ password: '', email: '' })
   const router = useRouter()
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: any) => {
     e.preventDefault()
+    console.log(state);
+
     const result = await signup({ input: state })
 
-    if (result.data.createUser) {
+    console.log(result.error);
+
+
+    if (result.data?.createUser) {
       setToken(result.data.createUser.token)
       router.push('/')
     }
