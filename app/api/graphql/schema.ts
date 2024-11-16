@@ -1,27 +1,23 @@
 const schema = `#graphql
-  type Person {
+  type User {
     id: ID!
-    name: String!
+    email: String!
+    createdAt: String!
+    token: String
   }
 
-  type Animal {
-    id: ID!
-    name: String!
-    speed: Int!
+  input AuthInput {
+    email: String!
+    password: String!
   }
-
-  type bird  {
-    id: ID!
-    name: String!
-    wingspan: Int!
-  }
-
-  union AnimalOrBird = Animal | bird
 
   type Query {
-    hello: String!,
-    people: [Person!]!
-    animalOrBird: [AnimalOrBird]!
+    me: User
+  }
+
+  type Mutation{
+    signin(input: AuthInput!): User
+    createUser(input: AuthInput!): User
   }
 `
 
