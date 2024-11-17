@@ -46,10 +46,18 @@ const schema = `#graphql
     issues(input: IssuesFilterInput): [Issue]!
   }
 
+  input EditIssueInput {
+    id: ID!
+    name: String
+    content: String
+    status: IssueStatus
+  }
+
   type Mutation{
     signin(input: AuthInput!): User
     createUser(input: AuthInput!): User
     createIssue(input: IssueInput!): Issue
+    editIssue(input: EditIssueInput!): Issue!
   }
 `
 

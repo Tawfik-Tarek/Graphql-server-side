@@ -74,6 +74,38 @@ const resolvers = {
       }
       return data[0]
     },
+    editIssue: async (_: any, args: any, context: GQLContext) => {
+      const user = context.user
+      if (!user) {
+        throw new GraphQLError('UNAUTHORIZED', {
+          extensions: { code: 401 },
+        })
+      }
+      const {id: issueId, ...updates } = args.input
+      if (!issueId) {
+        throw new GraphQLError('issueId is required', {
+          extensions: { code: 401 },
+        })
+      }
+
+      if (!updates.name && !updates.content && !updates.status) {
+        throw new GraphQLError('at least one field is required', {
+          extensions: { code: 401 },
+        })
+      }
+
+      const data = await db
+        .update(issues)
+        .set(updates)
+        .where(and(eq(issues.id, issueId), eq(issues.userId, user.id)))
+        .returning()
+      if (!data) {
+        throw new GraphQLError('could not update issue', {
+          extensions: { code: 401 },
+        })
+      }
+      return data[0]
+    },
   },
   Issue: {
     user: async (parent: any, _: any, context: GQLContext) => {
