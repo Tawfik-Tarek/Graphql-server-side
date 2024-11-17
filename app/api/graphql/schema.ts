@@ -29,6 +29,7 @@ const schema = `#graphql
     email: String!
     createdAt: String!
     token: String
+    issues: [Issue]!
   }
 
   input AuthInput {
@@ -36,8 +37,13 @@ const schema = `#graphql
     password: String!
   }
 
+  input IssuesFilterInput{
+    statuses: [IssueStatus!]
+  }
+
   type Query {
     me: User
+    issues(input: IssuesFilterInput): [Issue]!
   }
 
   type Mutation{

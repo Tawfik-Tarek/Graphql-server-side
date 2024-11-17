@@ -10,6 +10,31 @@ const resolvers = {
     me: (_: any, __: any, context: GraphQLError) => {
       return context.user
     },
+    issues: async (parent: any, { input }: any, context: any) => {
+      const user = context.user
+      if (!user) {
+        throw new GraphQLError('UNAUTHORIZED', {
+          extensions: { code: 401 },
+        })
+      }
+
+      if (input && input.statuses && input.statuses.length > 0) {
+        const data = await db.query.issues.findMany({
+          where: and(
+            eq(issues.userId, user.id),
+            or(
+              ...input.statuses.map((status: any) => eq(issues.status, status))
+            )
+          ),
+        })
+        return data
+      }
+
+      const data = await db.query.issues.findMany({
+        where: eq(issues.userId, user.id),
+      })
+      return data
+    },
   },
 
   Mutation: {
@@ -71,8 +96,16 @@ const resolvers = {
   IssueStatus: {
     DONE: 'done',
     INPROGRESS: 'inprogress',
-    TODO : 'todo',
-    BACKLOG : 'backlog',
+    TODO: 'todo',
+    BACKLOG: 'backlog',
+  },
+  User: {
+    issues: async (parent: any, args: any, context: any) => {
+      const data = await db.query.issues.findMany({
+        where: eq(issues.userId, parent.id),
+      })
+      return data
+    },
   },
 }
 
